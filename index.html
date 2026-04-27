@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الخارطة الاستثمارية | Investment Map</title>
+
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243459;
+    --mint: #3ecfb2;
+    --mint-light: #e8faf7;
+    --mint-dark: #2aab93;
+    --gold: #f4a939;
+    --white: #ffffff;
+    --gray-100: #f5f7fa;
+    --gray-200: #e8ecf2;
+    --gray-400: #9aa5b8;
+    --gray-600: #5a6478;
+    --red: #e05252;
+    --shadow: 0 4px 24px rgba(26,39,68,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,39,68,0.16);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: var(--gray-100);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  body.en {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    direction: ltr;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(26,39,68,0.25);
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo .dot {
+    width: 10px; height: 10px;
+    background: var(--mint);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:.6; transform:scale(1.3); }
+  }
+
+  .header-title {
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .3px;
+  }
+
+  .lang-btn {
+    background: rgba(62,207,178,.15);
+    border: 1.5px solid var(--mint);
+    color: var(--mint);
+    padding: 7px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .lang-btn:hover { background: var(--mint); color: var(--navy); }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: var(--white);
+    padding: 20px 24px 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .step-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .step-label {
+    font-size: 11px;
+    color: var(--gray-400);
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+    transition: color .3s;
+    cursor: default;
+  }
+  .step-label.active { color: var(--mint-dark); }
+  .step-label.done { color: var(--navy); }
+
+  .progress-bar-outer {
+    height: 5px;
+    background: var(--gray-200);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mint-dark), var(--mint));
+    border-radius: 10px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .step-dots {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .step-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    border: 2.5px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--gray-400);
+    transition: all .3s;
+    position: relative;
+  }
+  .step-dot.active {
+    background: var(--mint);
+    border-color: var(--mint);
+    color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(62,207,178,.2);
+  }
+  .step-dot.done {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+
+  /* MAIN CARD */
+  .main {
+    padding: 24px 16px 40px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .step-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 24px;
+    display: none;
+    animation: fadeUp .35s ease;
+  }
+  .step-card.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .step-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--mint-light);
+  }
+
+  .step-icon {
+    width: 42px; height: 42px;
+    background: var(--mint-light);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .step-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+  .step-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 20px; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-600);
+    margin-bottom: 7px;
+  }
+
+  label .req { color: var(--red); margin-inline-start: 2px; }
+
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--white);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  body.en input[type="text"],
+  body.en input[type="date"],
+  body.en select,
+  body.en textarea {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--mint);
+    box-shadow: 0 0 0 3px rgba(62,207,178,.15);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* RADIO & CHECKBOX PILLS */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill-group label {
+    margin: 0;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+  }
+
+  .pill-group input { display: none; }
+
+  .pill-group input + span {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all .18s;
+    background: var(--white);
+    color: var(--gray-600);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+  }
+
+  .pill-group input:checked + span {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+
+  .pill-group.mint input:checked + span {
+    background: var(--mint);
+    border-color: var(--mint-dark);
+    color: var(--navy);
+  }
+
+  /* COUNTER */
+  .counter {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    width: fit-content;
+    overflow: hidden;
+  }
+
+  .counter btn, .counter-btn {
+    width: 42px; height: 42px;
+    background: var(--gray-100);
+    border: none;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--navy);
+    transition: background .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .counter-btn:hover { background: var(--mint-light); }
+
+  .counter-val {
+    width: 60px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    border: none;
+    outline: none;
+    font-family: inherit;
+    background: transparent;
+  }
+
+  /* SUB DROPDOWN */
+  .sub-select { display: none; margin-top: 8px; }
+  .sub-select.visible { display: block; }
+
+  /* INCOME RANGE */
+  .income-pill-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .income-pill-group label { margin: 0; font-weight: 600; }
+  .income-pill-group input { display: none; }
+  .income-pill-group input + span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all .18s;
+    background: var(--white);
+    color: var(--gray-600);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .income-pill-group input + span .range-badge {
+    font-size: 11px;
+    background: var(--gray-100);
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: var(--gray-600);
+    transition: all .18s;
+  }
+  .income-pill-group input:checked + span {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .income-pill-group input:checked + span .range-badge {
+    background: rgba(255,255,255,.2);
+    color: var(--white);
+  }
+
+  /* CONDITIONAL */
+  .cond-field { display: none; margin-top: 10px; }
+  .cond-field.visible { display: block; }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--mint-light);
+    border-right: 4px solid var(--mint);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  body.en .info-box { border-right: none; border-left: 4px solid var(--mint); }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 22px 0 16px;
+    color: var(--gray-400);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* NAV BUTTONS */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    justify-content: space-between;
+  }
+
+  .btn {
+    padding: 13px 28px;
+    border-radius: var(--radius-sm);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  body.en .btn { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: var(--shadow); }
+
+  .btn-secondary {
+    background: var(--gray-100);
+    color: var(--navy);
+    border: 1.5px solid var(--gray-200);
+  }
+  .btn-secondary:hover { background: var(--gray-200); }
+
+  .btn-submit {
+    background: linear-gradient(135deg, var(--mint-dark), var(--mint));
+    color: var(--navy);
+    flex: 1;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(62,207,178,.3); }
+  .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  /* SUCCESS */
+  .success-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 40px 24px;
+    text-align: center;
+    display: none;
+  }
+  .success-card.active { display: block; animation: fadeUp .4s ease; }
+
+  .success-icon {
+    width: 70px; height: 70px;
+    background: var(--mint-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+
+  .success-title { font-size: 20px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--gray-600); line-height: 1.7; margin-bottom: 24px; }
+
+  .btn-new {
+    background: var(--navy);
+    color: var(--white);
+    padding: 13px 32px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    transition: all .2s;
+  }
+  .btn-new:hover { background: var(--navy-light); }
+
+  /* ERROR */
+  .field-error {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 5px;
+    font-weight: 600;
+    display: none;
+  }
+  .field.has-error input,
+  .field.has-error select,
+  .field.has-error textarea {
+    border-color: var(--red);
+  }
+  .field.has-error .field-error { display: block; }
+
+  /* QUESTION ICONS */
+  .q-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    line-height: 1.4;
+  }
+  .q-icon .ico {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--mint-light), #d0f5ef);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    box-shadow: 0 1px 4px rgba(62,207,178,0.18);
+    border: 1px solid rgba(62,207,178,0.25);
+  }
+  label.q-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+  }
+  label.q-icon .ico { margin-top: 1px; }
+
+  /* SPINNER */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(26,39,68,.2);
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    .main { padding: 16px 12px 40px; }
+    .step-card { padding: 20px 16px; }
+    .header { padding: 14px 16px; }
+    .header-title { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div class="dot"></div>
+    <span class="header-title" data-ar="الخارطة الاستثمارية — برنامج تنمية العائلات" data-en="Investment Map — Family Development Program">الخارطة الاستثمارية — برنامج تنمية العائلات</span>
+  </div>
+  <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="step-labels">
+    <div class="step-label active" id="lbl-1" data-ar="المعرّف" data-en="Identity">المعرّف</div>
+    <div class="step-label" id="lbl-2" data-ar="المشروع" data-en="Project">المشروع</div>
+    <div class="step-label" id="lbl-3" data-ar="السوق" data-en="Market">السوق</div>
+    <div class="step-label" id="lbl-4" data-ar="الدعم" data-en="Support">الدعم</div>
+    <div class="step-label" id="lbl-5" data-ar="المنطقة" data-en="Region">المنطقة</div>
+  </div>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progressBar" style="width:20%"></div>
+  </div>
+  <div class="step-dots">
+    <div class="step-dot active" id="dot-1">1</div>
+    <div class="step-dot" id="dot-2">2</div>
+    <div class="step-dot" id="dot-3">3</div>
+    <div class="step-dot" id="dot-4">4</div>
+    <div class="step-dot" id="dot-5">5</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1: Identity -->
+  <div class="step-card active" id="step-1">
+    <div class="step-heading">
+      <div class="step-icon">👤</div>
+      <div>
+        <div class="step-title" data-ar="بيانات المتطوع" data-en="Volunteer Information">بيانات المتطوع</div>
+        <div class="step-sub" data-ar="الخطوة 1 من 5" data-en="Step 1 of 5">الخطوة 1 من 5</div>
+      </div>
+    </div>
+
+    <div class="field" id="f-name">
+      <label><span class="q-icon"><span class="ico">👤</span><span data-ar="اسم المتطوع" data-en="Volunteer Name">اسم المتطوع</span></span> <span class="req">*</span></label>
+      <input type="text" id="q1" placeholder="">
+      <div class="field-error" data-ar="هذا الحقل مطلوب" data-en="This field is required">هذا الحقل مطلوب</div>
+    </div>
+
+    <div class="field" id="f-region">
+      <label><span class="q-icon"><span class="ico">📍</span><span data-ar="المنطقة" data-en="Region">المنطقة</span></span> <span class="req">*</span></label>
+      <select id="q2">
+        <option value="" data-ar="-- اختر المنطقة --" data-en="-- Select Region --">-- اختر المنطقة --</option>
+        <option value="سلمية المدينة" data-en="Salamiyah City">سلمية المدينة</option>
+        <option value="السعن" data-en="Al-Sa'n">السعن</option>
+        <option value="عقارب" data-en="Aqarib">عقارب</option>
+        <option value="جدوعة" data-en="Jadwa">جدوعة</option>
+        <option value="بري" data-en="Bari">بري</option>
+        <option value="تلدرة" data-en="Taldara">تلدرة</option>
+      </select>
+      <div class="field-error" data-ar="يرجى اختيار المنطقة" data-en="Please select a region">يرجى اختيار المنطقة</div>
+    </div>
+
+    <div class="field">
+      <label><span class="q-icon"><span class="ico">📅</span><span data-ar="تاريخ الزيارة" data-en="Visit Date">تاريخ الزيارة</span></span> <span class="req">*</span></label>
+      <input type="date" id="q3">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-primary" onclick="goStep(2)">
+        <span data-ar="التالي" data-en="Next">التالي</span> ←
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Project -->
+  <div class="step-card" id="step-2">
+    <div class="step-heading">
+      <div class="step-icon">🏪</div>
+      <div>
+        <div class="step-title" data-ar="بيانات المشروع" data-en="Project Details">بيانات المشروع</div>
+        <div class="step-sub" data-ar="الخطوة 2 من 5" data-en="Step 2 of 5">الخطوة 2 من 5</div>
+      </div>
+    </div>
+
+    <div class="field" id="f-type">
+      <label><span class="q-icon"><span class="ico">🏷️</span><span data-ar="نوع النشاط" data-en="Activity Type">نوع النشاط</span></span> <span class="req">*</span></label>
+      <select id="q4-main" onchange="updateSubType()">
+        <option value="" data-ar="-- اختر النوع --" data-en="-- Select Type --">-- اختر النوع --</option>
+        <option value="تجاري" data-en="Commercial">تجاري</option>
+        <option value="زراعي" data-en="Agricultural">زراعي</option>
+        <option value="تربية الحيوان" data-en="Animal Husbandry">تربية الحيوان</option>
+        <option value="حرفي" data-en="Craft">حرفي</option>
+        <option value="خدمي" data-en="Service">خدمي</option>
+        <option value="صناعي" data-en="Industrial">صناعي</option>
+      </select>
+      <div class="field-error" data-ar="يرجى اختيار نوع النشاط" data-en="Please select activity type">يرجى اختيار نوع النشاط</div>
+      <select id="q4-sub" class="sub-select" style="margin-top:8px">
+        <option value="">-- اختر التصنيف الفرعي --</option>
+      </select>
+    </div>
+
+    <div class="field" id="f-pname">
+      <label><span class="q-icon"><span class="ico">🏪</span><span data-ar="اسم / وصف المشروع" data-en="Project Name / Description">اسم / وصف المشروع</span></span> <span class="req">*</span></label>
+      <input type="text" id="q5" placeholder="">
+      <div class="field-error" data-ar="هذا الحقل مطلوب" data-en="This field is required">هذا الحقل مطلوب</div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">🔄</span><span data-ar="حالة المشروع" data-en="Project Status">حالة المشروع</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q6" value="مستمر"><span data-ar="مستمر ✅" data-en="Active ✅">مستمر ✅</span></label>
+        <label><input type="radio" name="q6" value="متوقف مؤقتاً"><span data-ar="متوقف مؤقتاً ⏸️" data-en="Paused ⏸️">متوقف مؤقتاً ⏸️</span></label>
+        <label><input type="radio" name="q6" value="متوقف نهائياً"><span data-ar="متوقف نهائياً ❌" data-en="Closed ❌">متوقف نهائياً ❌</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">⏳</span><span data-ar="عمر المشروع" data-en="Project Age">عمر المشروع</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q7" value="أقل من سنة"><span data-ar="أقل من سنة" data-en="Less than 1 year">أقل من سنة</span></label>
+        <label><input type="radio" name="q7" value="1-3 سنوات"><span data-ar="1-3 سنوات" data-en="1-3 years">1-3 سنوات</span></label>
+        <label><input type="radio" name="q7" value="أكثر من 3 سنوات"><span data-ar="أكثر من 3 سنوات" data-en="More than 3 years">أكثر من 3 سنوات</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">👷</span><span data-ar="عدد العاملين في المشروع" data-en="Number of Workers">عدد العاملين في المشروع</span></label>
+      <div class="counter">
+        <button class="counter-btn" onclick="changeCount(-1)">−</button>
+        <input type="text" class="counter-val" id="q8" value="1" readonly>
+        <button class="counter-btn" onclick="changeCount(1)">+</button>
+      </div>
+    </div>
+
+    <!-- INCOME LEVEL -->
+    <div class="field">
+      <label><span class="q-icon"><span class="ico">💵</span><span data-ar="مستوى الدخل الشهري للمشروع" data-en="Monthly Income Level">مستوى الدخل الشهري للمشروع</span></span></label>
+      <div class="income-pill-group">
+        <label>
+          <input type="radio" name="q12" value="ضعيف (30-100$)">
+          <span>
+            <span data-ar="ضعيف" data-en="Weak">ضعيف</span>
+            <span class="range-badge">$30 – $100</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="q12" value="متوسط منخفض (101-200$)">
+          <span>
+            <span data-ar="متوسط منخفض" data-en="Low Average">متوسط منخفض</span>
+            <span class="range-badge">$101 – $200</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="q12" value="متوسط (201-300$)">
+          <span>
+            <span data-ar="متوسط" data-en="Average">متوسط</span>
+            <span class="range-badge">$201 – $300</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="q12" value="جيد (301-500$)">
+          <span>
+            <span data-ar="جيد" data-en="Good">جيد</span>
+            <span class="range-badge">$301 – $500</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="q12" value="جيد جداً (501-600$)">
+          <span>
+            <span data-ar="جيد جداً" data-en="Very Good">جيد جداً</span>
+            <span class="range-badge">$501 – $600</span>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="q12" value="ممتاز (أكثر من 600$)">
+          <span>
+            <span data-ar="ممتاز" data-en="Excellent">ممتاز</span>
+            <span class="range-badge">> $600</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- مصدر رأس المال -->
+    <div class="field">
+      <label class="q-icon"><span class="ico">🏦</span><span data-ar="مصدر رأس المال الحالي للمشروع" data-en="Current Capital Source">مصدر رأس المال الحالي للمشروع</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q_capital" value="مدخرات شخصية"><span data-ar="مدخرات شخصية" data-en="Personal Savings">مدخرات شخصية</span></label>
+        <label><input type="radio" name="q_capital" value="قرض"><span data-ar="قرض" data-en="Loan">قرض</span></label>
+        <label><input type="radio" name="q_capital" value="دعم عائلي"><span data-ar="دعم عائلي" data-en="Family Support">دعم عائلي</span></label>
+        <label><input type="radio" name="q_capital" value="منظمة"><span data-ar="منظمة / برنامج" data-en="Organization / Program">منظمة / برنامج</span></label>
+        <label><input type="radio" name="q_capital" value="غير محدد"><span data-ar="غير محدد" data-en="Unspecified">غير محدد</span></label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">→ <span data-ar="السابق" data-en="Back">السابق</span></button>
+      <button class="btn btn-primary" onclick="goStep(3)"><span data-ar="التالي" data-en="Next">التالي</span> ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Market -->
+  <div class="step-card" id="step-3">
+    <div class="step-heading">
+      <div class="step-icon">📊</div>
+      <div>
+        <div class="step-title" data-ar="تحليل السوق" data-en="Market Analysis">تحليل السوق</div>
+        <div class="step-sub" data-ar="الخطوة 3 من 5" data-en="Step 3 of 5">الخطوة 3 من 5</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">📦</span><span data-ar="توافر المواد الأولية" data-en="Raw Material Availability">توافر المواد الأولية</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q9" value="متوفرة دائماً"><span data-ar="متوفرة دائماً" data-en="Always Available">متوفرة دائماً</span></label>
+        <label><input type="radio" name="q9" value="متوفرة أحياناً"><span data-ar="متوفرة أحياناً" data-en="Sometimes Available">متوفرة أحياناً</span></label>
+        <label><input type="radio" name="q9" value="شحيحة"><span data-ar="شحيحة" data-en="Scarce">شحيحة</span></label>
+        <label><input type="radio" name="q9" value="غير متوفرة"><span data-ar="غير متوفرة" data-en="Unavailable">غير متوفرة</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">📉</span><span data-ar="هل السوق مشبع بهذا النوع من المشاريع؟" data-en="Is the market saturated?">هل السوق مشبع بهذا النوع من المشاريع؟</span></label>
+      <div class="pill-group mint">
+        <label><input type="radio" name="q10" value="نعم"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q10" value="جزئياً"><span data-ar="جزئياً" data-en="Partially">جزئياً</span></label>
+        <label><input type="radio" name="q10" value="لا"><span data-ar="لا" data-en="No">لا</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">⚔️</span><span data-ar="حجم المنافسة المحلية" data-en="Local Competition Level">حجم المنافسة المحلية</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q11" value="لا منافسة"><span data-ar="لا منافسة" data-en="No Competition">لا منافسة</span></label>
+        <label><input type="radio" name="q11" value="منافسة ضعيفة"><span data-ar="ضعيفة" data-en="Weak">ضعيفة</span></label>
+        <label><input type="radio" name="q11" value="منافسة متوسطة"><span data-ar="متوسطة" data-en="Moderate">متوسطة</span></label>
+        <label><input type="radio" name="q11" value="منافسة عالية"><span data-ar="عالية" data-en="High">عالية</span></label>
+        <label><input type="radio" name="q11" value="منافسة شديدة جداً"><span data-ar="شديدة جداً" data-en="Very High">شديدة جداً</span></label>
+      </div>
+    </div>
+
+    <!-- منافسة خارجية -->
+    <div class="field">
+      <label class="q-icon"><span class="ico">🌍</span><span data-ar="هل يعاني المشروع من منافسة منتجات خارجية (مستوردة أو من مناطق أخرى)؟" data-en="Does the project face external competition (imported or from other regions)?">هل يعاني المشروع من منافسة منتجات خارجية (مستوردة أو من مناطق أخرى)؟</span></label>
+      <div class="pill-group mint">
+        <label><input type="radio" name="q_ext_comp" value="نعم"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q_ext_comp" value="لا"><span data-ar="لا" data-en="No">لا</span></label>
+        <label><input type="radio" name="q_ext_comp" value="لا أعرف"><span data-ar="لا أعرف" data-en="Don't Know">لا أعرف</span></label>
+      </div>
+    </div>
+
+    <!-- طريقة البيع -->
+    <div class="field">
+      <label class="q-icon"><span class="ico">🛒</span><span data-ar="كيف يبيع صاحب المشروع منتجاته أو خدماته؟" data-en="How does the project owner sell?">كيف يبيع صاحب المشروع منتجاته أو خدماته؟</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q_sell" value="من المشروع مباشرة"><span data-ar="من المشروع مباشرة" data-en="Direct from project">من المشروع مباشرة</span></label>
+        <label><input type="radio" name="q_sell" value="عبر وسيط"><span data-ar="عبر وسيط" data-en="Via intermediary">عبر وسيط</span></label>
+        <label><input type="radio" name="q_sell" value="بالطلب المسبق"><span data-ar="بالطلب المسبق" data-en="Pre-order">بالطلب المسبق</span></label>
+        <label><input type="radio" name="q_sell" value="متنقل"><span data-ar="متنقل" data-en="Mobile selling">متنقل</span></label>
+      </div>
+    </div>
+
+    <!-- البيع خارج المنطقة -->
+    <div class="field">
+      <label class="q-icon"><span class="ico">🚚</span><span data-ar="هل يبيع صاحب المشروع منتجاته خارج المنطقة؟" data-en="Does the owner sell outside the region?">هل يبيع صاحب المشروع منتجاته خارج المنطقة؟</span></label>
+      <div class="pill-group mint">
+        <label><input type="radio" name="q_outsell" value="نعم"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q_outsell" value="لا"><span data-ar="لا" data-en="No">لا</span></label>
+      </div>
+    </div>
+
+    <!-- التخزين والتبريد -->
+    <div class="field">
+      <label class="q-icon"><span class="ico">🏗️</span><span data-ar="هل المنطقة بحاجة لمشاريع تخزين أو تبريد؟" data-en="Does the region need storage or cold storage projects?">هل المنطقة بحاجة لمشاريع تخزين أو تبريد؟</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q_storage" value="نعم"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q_storage" value="لا"><span data-ar="لا" data-en="No">لا</span></label>
+        <label><input type="radio" name="q_storage" value="لا أعرف"><span data-ar="لا أعرف" data-en="Don't Know">لا أعرف</span></label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">→ <span data-ar="السابق" data-en="Back">السابق</span></button>
+      <button class="btn btn-primary" onclick="goStep(4)"><span data-ar="التالي" data-en="Next">التالي</span> ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Support -->
+  <div class="step-card" id="step-4">
+    <div class="step-heading">
+      <div class="step-icon">🤝</div>
+      <div>
+        <div class="step-title" data-ar="تقييم الدعم" data-en="Support Evaluation">تقييم الدعم</div>
+        <div class="step-sub" data-ar="الخطوة 4 من 5" data-en="Step 4 of 5">الخطوة 4 من 5</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">🎯</span><span data-ar="فرص نجاح المشروع لو حصل على دعم مناسب" data-en="Success chances if supported">فرص نجاح المشروع لو حصل على دعم مناسب</span></label>
+      <div class="pill-group">
+        <label><input type="radio" name="q13" value="منخفضة"><span data-ar="منخفضة" data-en="Low">منخفضة</span></label>
+        <label><input type="radio" name="q13" value="متوسطة"><span data-ar="متوسطة" data-en="Moderate">متوسطة</span></label>
+        <label><input type="radio" name="q13" value="عالية"><span data-ar="عالية" data-en="High">عالية</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">🚧</span><span data-ar="ما أبرز العوائق التي يواجهها المشروع؟" data-en="Main obstacles facing the project?">ما أبرز العوائق التي يواجهها المشروع؟</span></label>
+      <div class="pill-group">
+        <label><input type="checkbox" name="q14" value="نقص رأس المال"><span data-ar="نقص رأس المال" data-en="Lack of capital">نقص رأس المال</span></label>
+        <label><input type="checkbox" name="q14" value="غياب التسويق"><span data-ar="غياب التسويق" data-en="Lack of marketing">غياب التسويق</span></label>
+        <label><input type="checkbox" name="q14" value="ضعف الطلب"><span data-ar="ضعف الطلب" data-en="Weak demand">ضعف الطلب</span></label>
+        <label><input type="checkbox" name="q14" value="غياب المواد الأولية"><span data-ar="غياب المواد الأولية" data-en="Missing raw materials">غياب المواد الأولية</span></label>
+        <label><input type="checkbox" name="q14" value="منافسة شديدة"><span data-ar="منافسة شديدة" data-en="Strong competition">منافسة شديدة</span></label>
+        <label><input type="checkbox" name="q14" value="ضعف البنية التحتية"><span data-ar="ضعف البنية التحتية" data-en="Infrastructure issues">ضعف البنية التحتية</span></label>
+        <label><input type="checkbox" name="q14" value="نقص الخبرة"><span data-ar="نقص الخبرة" data-en="Lack of expertise">نقص الخبرة</span></label>
+        <label><input type="checkbox" name="q14" value="مشاكل النقل"><span data-ar="مشاكل النقل" data-en="Transport issues">مشاكل النقل</span></label>
+        <label><input type="checkbox" name="q14" value="تغير أسعار الصرف"><span data-ar="تغير أسعار الصرف" data-en="Exchange rate fluctuations">تغير أسعار الصرف</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">💡</span><span data-ar="هل يُلاحَظ طلب غير ملبّى على منتج أو خدمة في المنطقة؟" data-en="Is there unmet demand in the region?">هل يُلاحَظ طلب غير ملبّى على منتج أو خدمة في المنطقة؟</span></label>
+      <div class="pill-group mint" id="q15-group">
+        <label><input type="radio" name="q15" value="نعم" onchange="toggleCond('cond-q15','نعم','q15')"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q15" value="لا" onchange="toggleCond('cond-q15','نعم','q15')"><span data-ar="لا" data-en="No">لا</span></label>
+      </div>
+      <div class="cond-field" id="cond-q15">
+        <input type="text" id="q15-detail" placeholder="" data-ar-placeholder="اذكر المنتج أو الخدمة..." data-en-placeholder="Describe the product or service...">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">🤝</span><span data-ar="هل المشروع قابل للشراكة أو التوسع بدعم من البرنامج؟" data-en="Is the project open to partnership or expansion?">هل المشروع قابل للشراكة أو التوسع بدعم من البرنامج؟</span></label>
+      <div class="pill-group" id="q16-group">
+        <label><input type="radio" name="q16" value="نعم" onchange="toggleCond('cond-q16','لا','q16',true)"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q16" value="ربما" onchange="toggleCond('cond-q16','لا','q16',true)"><span data-ar="ربما" data-en="Maybe">ربما</span></label>
+        <label><input type="radio" name="q16" value="لا" onchange="toggleCond('cond-q16','لا','q16',true)"><span data-ar="لا" data-en="No">لا</span></label>
+      </div>
+      <div class="cond-field" id="cond-q16">
+        <input type="text" id="q16-reason" placeholder="" data-ar-placeholder="ما سبب الرفض؟" data-en-placeholder="Reason for refusal?">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">📝</span><span data-ar="ملاحظة ختامية عن المشروع (اختياري)" data-en="Final note about the project (optional)">ملاحظة ختامية عن المشروع (اختياري)</span></label>
+      <textarea id="q17" rows="3"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(3)">→ <span data-ar="السابق" data-en="Back">السابق</span></button>
+      <button class="btn btn-primary" onclick="goStep(5)"><span data-ar="التالي" data-en="Next">التالي</span> ←</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Region Observations -->
+  <div class="step-card" id="step-5">
+    <div class="step-heading">
+      <div class="step-icon">🗺️</div>
+      <div>
+        <div class="step-title" data-ar="ملاحظات المنطقة" data-en="Region Observations">ملاحظات المنطقة</div>
+        <div class="step-sub" data-ar="الخطوة 5 من 5" data-en="Step 5 of 5">الخطوة 5 من 5</div>
+      </div>
+    </div>
+
+    <div class="info-box" data-ar="هذه الأسئلة تتعلق بالمنطقة بشكل عام، وليست مرتبطة بالمشروع الذي تمت زيارته." data-en="These questions relate to the region in general, not to the specific project visited.">
+      هذه الأسئلة تتعلق بالمنطقة بشكل عام، وليست مرتبطة بالمشروع الذي تمت زيارته.
+    </div>
+
+    <!-- الخدمات الغائبة -->
+    <div class="field">
+      <label>
+        <span class="q-icon"><span class="ico">✈️</span><span data-ar="هل هناك خدمات تجارية أو صحية أو فنية أو خدمية تجبر سكان المنطقة على السفر خارجها للحصول عليها؟" data-en="Are there commercial, health, technical, or service needs that force residents to travel outside the region?">هل هناك خدمات تجارية أو صحية أو فنية أو خدمية تجبر سكان المنطقة على السفر خارجها للحصول عليها؟</span></span>
+      </label>
+      <div class="pill-group mint" style="margin-bottom:10px">
+        <label><input type="radio" name="q_travel" value="نعم" onchange="toggleCond('cond-travel','نعم','q_travel')"><span data-ar="نعم" data-en="Yes">نعم</span></label>
+        <label><input type="radio" name="q_travel" value="لا" onchange="toggleCond('cond-travel','نعم','q_travel')"><span data-ar="لا" data-en="No">لا</span></label>
+      </div>
+      <div class="cond-field" id="cond-travel">
+        <label style="font-size:12px; color:var(--gray-400); margin-bottom:6px;" data-ar="اذكر هذه الخدمات:" data-en="List these services:">اذكر هذه الخدمات:</label>
+        <textarea id="q_travel_detail" rows="3" data-ar-placeholder="مثال: طبيب أسنان، بنك، مواد بناء متخصصة..." data-en-placeholder="E.g.: Dentist, bank, specialized building materials..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-divider" data-ar="معلومات إضافية" data-en="Additional Info">معلومات إضافية</div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">📊</span><span data-ar="ما القطاعات الأكثر نشاطاً وحيوية في المنطقة حالياً؟" data-en="What are the most active sectors in the region currently?">ما القطاعات الأكثر نشاطاً وحيوية في المنطقة حالياً؟</span></label>
+      <div class="pill-group">
+        <label><input type="checkbox" name="q_active" value="تجاري"><span data-ar="تجاري" data-en="Commercial">تجاري</span></label>
+        <label><input type="checkbox" name="q_active" value="زراعي"><span data-ar="زراعي" data-en="Agricultural">زراعي</span></label>
+        <label><input type="checkbox" name="q_active" value="حرفي"><span data-ar="حرفي" data-en="Craft">حرفي</span></label>
+        <label><input type="checkbox" name="q_active" value="خدمي"><span data-ar="خدمي" data-en="Service">خدمي</span></label>
+        <label><input type="checkbox" name="q_active" value="تربية الحيوان"><span data-ar="تربية الحيوان" data-en="Animal Husbandry">تربية الحيوان</span></label>
+        <label><input type="checkbox" name="q_active" value="صناعي"><span data-ar="صناعي" data-en="Industrial">صناعي</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q-icon"><span class="ico">🗒️</span><span data-ar="ملاحظات عامة عن المنطقة (اختياري)" data-en="General notes about the region (optional)">ملاحظات عامة عن المنطقة (اختياري)</span></label>
+      <textarea id="q_region_notes" rows="3"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goStep(4)">→ <span data-ar="السابق" data-en="Back">السابق</span></button>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">
+        <span class="spinner" id="spinner"></span>
+        <span id="submitText" data-ar="إرسال التقرير ✓" data-en="Submit Report ✓">إرسال التقرير ✓</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✅</div>
+    <div class="success-title" data-ar="تم الإرسال بنجاح!" data-en="Submitted Successfully!">تم الإرسال بنجاح!</div>
+    <div class="success-sub" data-ar="شكراً لك، تم تسجيل بيانات المشروع في قاعدة البيانات وستظهر في لوحة تحكم المدير قريباً." data-en="Thank you. Project data has been recorded and will appear in the manager dashboard shortly.">شكراً لك، تم تسجيل بيانات المشروع في قاعدة البيانات وستظهر في لوحة تحكم المدير قريباً.</div>
+    <button class="btn-new" onclick="resetForm()" data-ar="تسجيل مشروع جديد +" data-en="Add New Project +">تسجيل مشروع جديد +</button>
+  </div>
+
+</div>
+
+<script>
+// ===== APPS SCRIPT URL — سيُضاف لاحقاً =====
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTtNV9KEnJ0xCWy2eYUrHZzGY2OMBDp7WO_Gk7UMRSykqEZbppDd7luipfU4OTihjd/exec";
+
+// ===== LANGUAGE =====
+let currentLang = 'ar';
+
+function toggleLang() {
+  currentLang = currentLang === 'ar' ? 'en' : 'ar';
+  document.documentElement.lang = currentLang;
+  document.body.classList.toggle('en', currentLang === 'en');
+  document.body.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'EN' : 'عر';
+  updateAllText();
+  updatePlaceholders();
+}
+
+function updateAllText() {
+  document.querySelectorAll('[data-ar]').forEach(el => {
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
+    el.textContent = currentLang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
+  });
+  document.querySelectorAll('option[data-en]').forEach(opt => {
+    if (currentLang === 'en') {
+      if (!opt._arText) opt._arText = opt.textContent;
+      opt.textContent = opt.dataset.en;
+    } else {
+      if (opt._arText) opt.textContent = opt._arText;
+    }
+  });
+}
+
+function updatePlaceholders() {
+  document.querySelectorAll('[data-ar-placeholder]').forEach(el => {
+    el.placeholder = currentLang === 'ar' ? el.dataset.arPlaceholder : (el.dataset.enPlaceholder || '');
+  });
+}
+
+// ===== STEP NAVIGATION =====
+let currentStep = 1;
+const totalSteps = 5;
+
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('dot-' + currentStep).classList.remove('active');
+  document.getElementById('dot-' + currentStep).classList.add('done');
+  document.getElementById('lbl-' + currentStep).classList.remove('active');
+  document.getElementById('lbl-' + currentStep).classList.add('done');
+
+  if (n < currentStep) {
+    document.getElementById('dot-' + currentStep).classList.remove('done');
+    document.getElementById('lbl-' + currentStep).classList.remove('done');
+  }
+
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  document.getElementById('dot-' + currentStep).classList.remove('done');
+  document.getElementById('dot-' + currentStep).classList.add('active');
+  document.getElementById('lbl-' + currentStep).classList.remove('done');
+  document.getElementById('lbl-' + currentStep).classList.add('active');
+
+  const pct = (currentStep / totalSteps) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== VALIDATION =====
+function validateStep(step) {
+  let valid = true;
+  if (step === 1) {
+    valid = validateField('f-name', document.getElementById('q1').value.trim()) && valid;
+    valid = validateField('f-region', document.getElementById('q2').value) && valid;
+  }
+  if (step === 2) {
+    valid = validateField('f-type', document.getElementById('q4-main').value) && valid;
+    valid = validateField('f-pname', document.getElementById('q5').value.trim()) && valid;
+  }
+  return valid;
+}
+
+function validateField(fieldId, value) {
+  const field = document.getElementById(fieldId);
+  if (!field) return true;
+  if (!value) {
+    field.classList.add('has-error');
+    return false;
+  }
+  field.classList.remove('has-error');
+  return true;
+}
+
+// ===== SUB TYPE =====
+const subTypes = {
+  'تجاري': ['بقالة','ملبوسات','مواد بناء','صيدلية','إلكترونيات','مواد غذائية','أثاث','أخرى'],
+  'زراعي': ['خضار','أشجار مثمرة','محاصيل حقلية','تربية النحل','أخرى'],
+  'تربية الحيوان': ['أغنام','أبقار','ماعز','دجاج بياض','دجاج بلدي','طيور زينة','أسماك','أخرى'],
+  'حرفي': ['نجارة','حدادة','خياطة','بناء','كهرباء','سباكة','حياكة','أخرى'],
+  'خدمي': ['نقل','صالون','مطعم','تصليح','تنظيف','تعليم خاص','أخرى'],
+  'صناعي': ['غذائي','نسيج','تعبئة','أخرى']
+};
+
+const subTypesEn = {
+  'تجاري': ['Grocery','Clothing','Building Materials','Pharmacy','Electronics','Food Products','Furniture','Other'],
+  'زراعي': ['Vegetables','Fruit Trees','Field Crops','Beekeeping','Other'],
+  'تربية الحيوان': ['Sheep','Cattle','Goats','Laying Hens','Local Chickens','Ornamental Birds','Fish','Other'],
+  'حرفي': ['Carpentry','Blacksmithing','Tailoring','Construction','Electrical','Plumbing','Knitting','Other'],
+  'خدمي': ['Transport','Salon','Restaurant','Repair','Cleaning','Private Education','Other'],
+  'صناعي': ['Food','Textile','Packaging','Other']
+};
+
+function updateSubType() {
+  const main = document.getElementById('q4-main').value;
+  const sub = document.getElementById('q4-sub');
+  sub.innerHTML = '';
+  if (!main) { sub.classList.remove('visible'); return; }
+  sub.classList.add('visible');
+  const opts = currentLang === 'en' ? (subTypesEn[main] || subTypes[main]) : subTypes[main];
+  const arOpts = subTypes[main] || [];
+  const enOpts = subTypesEn[main] || arOpts;
+  const placeholder = currentLang === 'ar' ? '-- اختر التصنيف الفرعي --' : '-- Select Subcategory --';
+  sub.innerHTML = `<option value="">${placeholder}</option>`;
+  arOpts.forEach((ar, i) => {
+    const en = enOpts[i] || ar;
+    const opt = document.createElement('option');
+    opt.value = ar;
+    opt.textContent = currentLang === 'en' ? en : ar;
+    opt._arText = ar;
+    opt.dataset.en = en;
+    sub.appendChild(opt);
+  });
+  document.getElementById('f-type').classList.remove('has-error');
+}
+
+// ===== COUNTER =====
+function changeCount(delta) {
+  const el = document.getElementById('q8');
+  let val = parseInt(el.value) || 1;
+  val = Math.max(1, val + delta);
+  el.value = val;
+}
+
+// ===== CONDITIONAL FIELDS =====
+function toggleCond(condId, triggerVal, radioName, invert) {
+  const selected = document.querySelector(`input[name="${radioName}"]:checked`);
+  const cond = document.getElementById(condId);
+  if (!selected || !cond) return;
+  const show = invert ? selected.value === triggerVal : selected.value === triggerVal;
+  cond.classList.toggle('visible', show);
+}
+
+// ===== SET TODAY =====
+window.onload = function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('q3').value = today;
+  updatePlaceholders();
+};
+
+// ===== SUBMIT =====
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const submitText = document.getElementById('submitText');
+  btn.disabled = true;
+  spinner.style.display = 'block';
+
+  const obstacles = [...document.querySelectorAll('input[name="q14"]:checked')].map(i => i.value).join(', ');
+  const activeSectors = [...document.querySelectorAll('input[name="q_active"]:checked')].map(i => i.value).join(', ');
+
+  const data = {
+    timestamp: new Date().toLocaleString('ar-SY'),
+    volunteer: document.getElementById('q1').value,
+    region: document.getElementById('q2').value,
+    date: document.getElementById('q3').value,
+    activityMain: document.getElementById('q4-main').value,
+    activitySub: document.getElementById('q4-sub').value,
+    projectName: document.getElementById('q5').value,
+    status: document.querySelector('input[name="q6"]:checked')?.value || '',
+    age: document.querySelector('input[name="q7"]:checked')?.value || '',
+    workers: document.getElementById('q8').value,
+    materials: document.querySelector('input[name="q9"]:checked')?.value || '',
+    saturated: document.querySelector('input[name="q10"]:checked')?.value || '',
+    competition: document.querySelector('input[name="q11"]:checked')?.value || '',
+    income: document.querySelector('input[name="q12"]:checked')?.value || '',
+    capitalSource: document.querySelector('input[name="q_capital"]:checked')?.value || '',
+    extCompetition: document.querySelector('input[name="q_ext_comp"]:checked')?.value || '',
+    sellMethod: document.querySelector('input[name="q_sell"]:checked')?.value || '',
+    sellOutside: document.querySelector('input[name="q_outsell"]:checked')?.value || '',
+    storageNeed: document.querySelector('input[name="q_storage"]:checked')?.value || '',
+    successChance: document.querySelector('input[name="q13"]:checked')?.value || '',
+    obstacles: obstacles,
+    unmetDemand: document.querySelector('input[name="q15"]:checked')?.value || '',
+    unmetDetail: document.getElementById('q15-detail').value,
+    partnership: document.querySelector('input[name="q16"]:checked')?.value || '',
+    partnershipReason: document.getElementById('q16-reason').value,
+    note: document.getElementById('q17').value,
+    travelServices: document.querySelector('input[name="q_travel"]:checked')?.value || '',
+    travelDetail: document.getElementById('q_travel_detail').value,
+    activeSectors: activeSectors,
+    regionNotes: document.getElementById('q_region_notes').value
+  };
+
+  try {
+    if (APPS_SCRIPT_URL) {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    }
+    // إظهار رسالة النجاح سواء كان هناك رابط أم لا
+    document.getElementById('step-5').classList.remove('active');
+    document.querySelector('.progress-wrap').style.display = 'none';
+    document.getElementById('successCard').classList.add('active');
+  } catch (e) {
+    alert(currentLang === 'ar' ? 'حدث خطأ في الإرسال، تحقق من الاتصال.' : 'Submission error. Check your connection.');
+    btn.disabled = false;
+    spinner.style.display = 'none';
+  }
+}
+
+// ===== RESET =====
+function resetForm() {
+  document.getElementById('successCard').classList.remove('active');
+  document.querySelector('.progress-wrap').style.display = 'block';
+  document.querySelectorAll('input[type="text"], textarea').forEach(i => i.value = '');
+  document.querySelectorAll('select').forEach(s => s.value = '');
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(i => i.checked = false);
+  document.querySelectorAll('.cond-field').forEach(c => c.classList.remove('visible'));
+  document.querySelectorAll('.sub-select').forEach(s => s.classList.remove('visible'));
+  document.getElementById('q8').value = '1';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('spinner').style.display = 'none';
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.remove('active','done');
+    if (i===0) d.classList.add('active');
+  });
+  document.querySelectorAll('.step-label').forEach((l,i) => {
+    l.classList.remove('active','done');
+    if (i===0) l.classList.add('active');
+  });
+  document.querySelectorAll('.step-card').forEach((c,i) => {
+    c.classList.remove('active');
+    if (i===0) c.classList.add('active');
+  });
+  document.getElementById('progressBar').style.width = '20%';
+  currentStep = 1;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('q3').value = today;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
